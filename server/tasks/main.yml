@@ -79,3 +79,14 @@
 - name: install mysql server
   package:
     name: mariadb-server
+
+- name: my.cnf
+  template:
+    src: server.cnf
+    dest: /etc/my.cnf.d/server.cnf
+
+- name: mysql daemon is running
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
