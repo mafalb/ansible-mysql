@@ -1,0 +1,26 @@
+---
+
+- name: test db does not exist
+  mysql_db:
+    name: test
+    state: absent
+  when: not (mysql_is_running.changed and ansible_check_mode)
+
+- name: anonymous user does not exist
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+  when: not (mysql_is_running.changed and ansible_check_mode)
+
+- name: get authentification plugins for root
+  command: mysql -BNe "select host from user where user='root' and plugin!='unix_socket'" mysql
+  register: root_hosts
+  check_mode: no
+  changed_when: no
+  when: not (mysql_is_running.changed and ansible_check_mode)
+
+- name: authenticate root via auth_socket
+  command: mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{ item }}' IDENTIFIED VIA unix_socket WITH GRANT OPTION"
+  with_items: "{{ root_hosts.stdout_lines }}"
+  when: not (mysql_is_running.changed and ansible_check_mode)

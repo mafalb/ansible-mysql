@@ -1,0 +1,5 @@
+---
+
+manage_storage: no
+manage_security: yes
+manage_service: yes

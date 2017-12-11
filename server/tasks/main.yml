@@ -1,92 +1,39 @@
 ---
 
-- name: create logical volume for mysql_data
-  lvol:
-    lv: mysql_data
-    vg: lvm.{{inventory_hostname}}
-    size: 1g
+- name: storage is managed, i.e. lvm, filesystems
+  include_role:
+    name: mysql/server
+    tasks_from: storage
+  when: manage_storage
 
-- name: filesystem for mysql data exists
-  filesystem:
-    dev: /dev/lvm.{{inventory_hostname}}/mysql_data
-    fstype: xfs
-
-- name: mount point for /var/lib/mysql exists
-  file:
-    path: /var/lib/mysql
-    state: directory
-    setype: mysqld_db_t
-
-- name: mount mysql data partition
-  mount:
-    src: /dev/lvm.{{inventory_hostname}}/mysql_data
-    path: /var/lib/mysql
-    state: mounted
-    fstype: xfs
-    opts: defaults,nodev,nosuid,noexec
-
-- name: mount point for /var/lib/mysql exists
-  file:
-    path: /var/lib/mysql
-    state: directory
-    setype: mysqld_db_t
-
-- name: resize data filesystem for mysql data
-  filesystem:
-    dev: /dev/lvm.{{inventory_hostname}}/mysql_data
-    fstype: xfs
-    resizefs: yes
-
-# log partition
-
-- name: create logical volume for mysql logs
-  lvol:
-    lv: mysql_log
-    vg: lvm.{{inventory_hostname}}
-    size: 1g
-
-- name: create filesystem for mysql logs
-  filesystem:
-    dev: /dev/lvm.{{inventory_hostname}}/mysql_log
-    fstype: xfs
-
-- name: mount point exists
-  file:
-    path: /var/log/mysql
-    state: directory
-    setype: var_log_t
-
-- name: mount mysql log partition
-  mount:
-    src: /dev/lvm.{{inventory_hostname}}/mysql_log
-    path: /var/log/mysql
-    state: mounted
-    fstype: xfs
-    opts: defaults,nodev,nosuid,noexec
-
-- name: mount point exists
-  file:
-    path: /var/log/mysql
-    state: directory
-    setype: var_log_t
-
-- name: resize data filesystem for mysql logs
-  filesystem:
-    dev: /dev/lvm.{{inventory_hostname}}/mysql_log
-    fstype: xfs
-    resizefs: yes
-
-- name: install mysql server
+- name: mysql server is installed
   package:
     name: mariadb-server
+    state: present
 
-- name: my.cnf
+- name: additional packages are installed
+  package:
+    name: MySQL-python
+  register: packages
+
+- name: my.cnf is in place
   template:
-    src: server.cnf
+    src: "{{ item }}"
     dest: /etc/my.cnf.d/server.cnf
+  with_first_found:
+    - "{{ playbook_dir }}/templates/{{ server_cnf }}"
+    - server.cnf
+  notify: restart mysql
 
 - name: mysql daemon is running
   service:
     name: mariadb
     state: started
     enabled: yes
+  register: mysql_is_running
+
+- name: mysql installation is secured
+  include_role:
+    name: mysql/server
+    tasks_from: secure
+  when: manage_security and not (mysql_is_running.changed and ansible_check_mode)

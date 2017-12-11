@@ -10,9 +10,11 @@
 
 # this is only for the mysqld standalone daemon
 [mysqld]
+plugin-load=unix_socket=auth_socket.so
 innodb_file_per_table
-innodb_log_file_size=32M
-innodb_buffer_pool_size=1G
+#innodb_log_file_size=32M
+#innodb_buffer_pool_size=1G
+log_bin=/var/log/mariadb/bin
 
 # this is only for embedded server
 [embedded]

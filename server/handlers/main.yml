@@ -1,6 +1,7 @@
 ---
 
-- name: reload mysql
+- name: restart mysql
   service:
     name: mariadb
-    state: reloaded
+    state: restarted
+  when: manage_service
