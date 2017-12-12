@@ -4,14 +4,14 @@
   mysql_db:
     name: test
     state: absent
-  when: not (mysql_is_running.changed and ansible_check_mode)
+  when: not (ansible_check_mode and packages.changed)
 
 - name: anonymous user does not exist
   mysql_user:
     name: ''
     host_all: yes
     state: absent
-  when: not (mysql_is_running.changed and ansible_check_mode)
+  when: not (ansible_check_mode and packages.changed)
 
 - name: get authentification plugins for root
   command: mysql -BNe "select host from user where user='root' and plugin!='unix_socket'" mysql
