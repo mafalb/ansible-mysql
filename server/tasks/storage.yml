@@ -5,6 +5,7 @@
     lv: mysql_data
     vg: lvm.{{inventory_hostname}}
     size: 1g
+    shrink: no
 
 - name: filesystem for mysql data exists
   filesystem:
@@ -44,6 +45,7 @@
     lv: mysql_log
     vg: lvm.{{inventory_hostname}}
     size: 1g
+    shrink: no
 
 - name: create filesystem for mysql logs
   filesystem:
