@@ -8,9 +8,10 @@
 
 - name: mysql server is installed
   package:
-    name: mariadb-server
+    name: "{{ package }}"
     state: present
-
+  when: manage_package
+  
 - name: additional packages are installed
   package:
     name: MySQL-python
@@ -19,7 +20,7 @@
 - name: my.cnf is in place
   template:
     src: "{{ item }}"
-    dest: /etc/my.cnf.d/server.cnf
+    dest: "{{ mysql_cnf }}"
   with_first_found:
     - "{{ playbook_dir }}/templates/{{ server_cnf }}"
     - server.cnf
@@ -27,7 +28,7 @@
 
 - name: mysql daemon is running
   service:
-    name: mariadb
+    name: "{{ daemon_name }}"
     state: started
     enabled: yes
   register: mysql_is_running
