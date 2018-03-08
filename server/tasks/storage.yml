@@ -3,7 +3,7 @@
 - name: create logical volume for mysql_data
   lvol:
     lv: mysql_data
-    vg: lvm.{{inventory_hostname}}
+    vg: "{{fs_vg_name|default('lvm.'+inventory_hostname)}}"
     size: 1g
     shrink: no
 
