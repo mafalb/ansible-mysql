@@ -32,9 +32,3 @@
     state: started
     enabled: yes
   register: mysql_is_running
-
-- name: mysql installation is secured
-  include_role:
-    name: mysql/server
-    tasks_from: secure
-  when: manage_security and not (mysql_is_running.changed and ansible_check_mode)
