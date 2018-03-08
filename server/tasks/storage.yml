@@ -9,7 +9,7 @@
 
 - name: filesystem for mysql data exists
   filesystem:
-    dev: /dev/lvm.{{inventory_hostname}}/mysql_data
+    dev: /dev/{{fs_vg_name|default('lvm.'+inventory_hostname)}}/mysql_data
     fstype: xfs
 
 - name: mount point for /var/lib/mysql exists
@@ -20,7 +20,7 @@
 
 - name: mount mysql data partition
   mount:
-    src: /dev/lvm.{{inventory_hostname}}/mysql_data
+    src: /dev/{{fs_vg_name|default('lvm.'+inventory_hostname)}}/mysql_data
     path: /var/lib/mysql
     state: mounted
     fstype: xfs
@@ -31,10 +31,12 @@
     path: /var/lib/mysql
     state: directory
     setype: mysqld_db_t
+    owner: mysql
+    group: mysql
 
 - name: resize data filesystem for mysql data
   filesystem:
-    dev: /dev/lvm.{{inventory_hostname}}/mysql_data
+    dev: /dev/{{fs_vg_name|default('lvm.'+inventory_hostname)}}/mysql_data
     fstype: xfs
     resizefs: yes
 
@@ -43,24 +45,26 @@
 - name: create logical volume for mysql logs
   lvol:
     lv: mysql_log
-    vg: lvm.{{inventory_hostname}}
+    vg: "{{fs_vg_name|default('lvm.'+inventory_hostname)}}"
     size: 1g
     shrink: no
 
 - name: create filesystem for mysql logs
   filesystem:
-    dev: /dev/lvm.{{inventory_hostname}}/mysql_log
+    dev: /dev/{{fs_vg_name|default('lvm.'+inventory_hostname)}}/mysql_log
     fstype: xfs
 
 - name: mount point exists
   file:
     path: /var/log/mysql
     state: directory
-    setype: var_log_t
+    setype: mysqld_log_t
+    owner: mysql
+    group: mysql
 
 - name: mount mysql log partition
   mount:
-    src: /dev/lvm.{{inventory_hostname}}/mysql_log
+    src: /dev/{{fs_vg_name|default('lvm.'+inventory_hostname)}}/mysql_log
     path: /var/log/mysql
     state: mounted
     fstype: xfs
@@ -70,11 +74,13 @@
   file:
     path: /var/log/mysql
     state: directory
-    setype: var_log_t
+    setype: mysqld_log_t
+    owner: mysql
+    group: mysql
 
 - name: resize data filesystem for mysql logs
   filesystem:
-    dev: /dev/lvm.{{inventory_hostname}}/mysql_log
+    dev: /dev/{{fs_vg_name|default('lvm.'+inventory_hostname)}}/mysql_log
     fstype: xfs
     resizefs: yes
 

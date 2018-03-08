@@ -12,15 +12,3 @@
     host_all: yes
     state: absent
   when: not (ansible_check_mode and packages.changed)
-
-- name: get authentification plugins for root
-  command: mysql -BNe "select host from user where user='root' and plugin!='auth_socket'" mysql
-  register: root_hosts
-  check_mode: no
-  changed_when: no
-  when: not (mysql_is_running.changed and ansible_check_mode)
-
-- name: authenticate root via auth_socket
-  command: mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{ item }}' IDENTIFIED with auth_socket WITH GRANT OPTION"
-  with_items: "{{ root_hosts.stdout_lines }}"
-  when: not (mysql_is_running.changed and ansible_check_mode)
