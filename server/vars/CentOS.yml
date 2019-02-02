@@ -7,3 +7,4 @@ mafalb:
       daemon: "{{ mafalb_mysql_server_daemon|default('mariadb') }}"
       additional_packages:
         - MySQL-python
+      mysqld_cnf: /etc/my.cnf.d/server.yml

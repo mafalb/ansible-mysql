@@ -7,3 +7,4 @@ mafalb:
       manage_security: false
       manage_service: true
       manage_config: true
+      external_config: false

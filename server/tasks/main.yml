@@ -9,6 +9,13 @@
     - never
     - debug
 
+- name: assertitions
+  assert:
+    that:
+      - mafalb.mysql.server.manage_package
+      - mafalb.mysql.server.package is defined
+      - mafalb.mysql.server.additional_packages is defined
+
 - name: package is present
   when: mafalb.mysql.server.manage_package
   package:
@@ -16,10 +23,21 @@
     state: present
 
 - name: my.cnf is in place
-  when: mafalb.mysql.server.manage_config
+  when:
+    - mafalb.mysql.server.manage_config
+    - not mafalb.mysql.server.external_config
   template:
-    src: "{{ my.cnf }}"
-    dest: "{{ mysql_cnf }}"
+    src: server.cnf
+    dest: "{{ mafalb.mysql.server.mysqld_cnf }}"
+  notify: reload mysql
+
+- name: my.cnf is in place
+  when:
+    - mafalb.mysql.server.manage_config
+    - mafalb.mysql.server.external_config
+  template:
+    src: server.cnf
+    dest: "{{ mafalb.mysql.server.mysqld_cnf }}"
   notify: reload mysql
 
 - name: mysql daemon is running

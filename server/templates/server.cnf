@@ -10,7 +10,7 @@
 
 # this is only for the mysqld standalone daemon
 [mysqld]
-plugin-load=unix_socket=auth_socket.so
+#plugin-load=unix_socket=auth_socket.so
 innodb_file_per_table
 #innodb_log_file_size=32M
 #innodb_buffer_pool_size=1G
