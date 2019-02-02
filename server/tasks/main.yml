@@ -12,7 +12,7 @@
 - name: package is present
   when: mafalb.mysql.server.manage_package
   package:
-    name: "{{ [ mafalb.mysql.server.package ] + mafalb.mysql.additional_packages }}"
+    name: "{{ [ mafalb.mysql.server.package ] + mafalb.mysql.server.additional_packages }}"
     state: present
 
 - name: my.cnf is in place
