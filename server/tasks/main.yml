@@ -1,14 +1,19 @@
 ---
 
+- name: include OS specific variables
+  include_vars:
+    file: "{{ ansible_distribution }}.yml"
+
+- debug: var=mafalb.mysql
+  tags:
+    - never
+    - debug
+
 - name: package is present
   when: mafalb.mysql.server.manage_package
   package:
-    name: "{{ mafalb.mysql.server.package }}"
+    name: "{{ [ mafalb.mysql.server.package ] + mafalb.mysql.additional_packages }}"
     state: present
-  
-- name: additional packages are installed
-  package:
-    name: MySQL-python
 
 - name: my.cnf is in place
   when: mafalb.mysql.server.manage_config

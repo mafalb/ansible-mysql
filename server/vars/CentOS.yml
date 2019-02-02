@@ -5,3 +5,5 @@ mafalb:
     server:
       package: "{{ mafalb_mysql_server_package|default('mariadb-server') }}"    
       daemon: "{{ mafalb_mysql_server_daemon|default('mariadb') }}"
+      additional_packages:
+        - MySQL-python
