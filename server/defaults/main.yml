@@ -6,3 +6,4 @@ mafalb:
       manage_package: true
       manage_security: false
       manage_service: true
+      manage_config: true
