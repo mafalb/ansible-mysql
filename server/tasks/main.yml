@@ -1,30 +1,21 @@
 ---
 
-- name: storage is managed, i.e. lvm, filesystems
-  include_role:
-    name: mysql/server
-    tasks_from: storage
-  when: manage_storage
-
-- name: mysql server is installed
+- name: package is present
+  when: mafalb.mysql.server.manage_package
   package:
-    name: "{{ package }}"
+    name: "{{ mafalb.mysql.server.package }}"
     state: present
-  when: manage_package
   
 - name: additional packages are installed
   package:
     name: MySQL-python
-  register: packages
 
 - name: my.cnf is in place
+  when: mafalb.mysql.server.manage_config
   template:
-    src: "{{ item }}"
+    src: "{{ my.cnf }}"
     dest: "{{ mysql_cnf }}"
-  with_first_found:
-    - "{{ playbook_dir }}/templates/{{ server_cnf }}"
-    - server.cnf
-  notify: restart mysql
+  notify: reload mysql
 
 - name: mysql daemon is running
   service:

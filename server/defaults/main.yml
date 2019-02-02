@@ -1,8 +1,8 @@
 ---
 
-manage_package: yes
-manage_storage: no
-manage_security: false
-manage_service: yes
-package: mariadb-server
-daemon_name: mariadb
+mafalb:
+  mysql:
+    server:
+      manage_package: true
+      manage_security: false
+      manage_service: true

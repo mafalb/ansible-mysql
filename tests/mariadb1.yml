@@ -1,0 +1,15 @@
+# vim: set ft=yaml ts=2:
+---
+- hosts: cihost
+  vars_files:
+    - vars/main.yml
+  roles:
+    - role: mafalb.ansible_ci/node
+      ansible_ci_test_name: mariadb1
+      ansible_ci_node_type: docker
+      ansible_ci_node_image_name: centos7
+
+- hosts: mariadb1
+  roles:
+    - role: mafalb.mysql/server
+...

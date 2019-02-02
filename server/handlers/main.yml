@@ -1,7 +1,7 @@
 ---
 
-- name: restart mysql
+- name: reload mysql
+  when: mafalb.mysql.server.manage_service
   service:
-    name: "{{ daemon_name }}"
+    name: "{{ mafalb.mysql.server.daemon }}"
     state: restarted
-  when: manage_service
