@@ -1,0 +1,14 @@
+# vim: set ft=yaml ts=2:
+---
+
+tests:
+  docker:
+    centos7:
+      src: centos-7
+      volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      member_of_groups:
+      - centos
+      - centos7
+      - el
+      - el7
