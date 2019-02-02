@@ -42,7 +42,7 @@
 
 - name: mysql daemon is running
   service:
-    name: "{{ daemon_name }}"
+    name: "{{ mafalb.mysql.server.daemon }}"
     state: started
-    enabled: yes
+    enabled: true
   register: mysql_is_running
