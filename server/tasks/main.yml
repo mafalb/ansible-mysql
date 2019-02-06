@@ -25,7 +25,7 @@
 - name: my.cnf does exist
   file:
     path: "{{ mafalb.mysql.server.mysqld_cnf }}"
-    
+
 - name: my.cnf is in place
   when:
     - mafalb.mysql.server.manage_config
