@@ -17,6 +17,6 @@
       command: mysql -e 'show databases'
     - name: check that we cant login without password
       command: mysql -e 'show databases' -p,fCkRZn6_95kH3i,9uG-
-      register: _mafalb.mysql.login
-      failed_when: _mafalb.mysql.login.rc == 0
+      register: _mafalb_mysql_login
+      failed_when: _mafalb_mysql_login.rc == 0
 ...
