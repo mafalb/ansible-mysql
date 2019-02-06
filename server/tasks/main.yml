@@ -22,6 +22,10 @@
     name: "{{ [ mafalb.mysql.server.package ] + mafalb.mysql.server.additional_packages }}"
     state: present
 
+- name: my.cnf does exist
+  file:
+    path: "{{ mafalb.mysql.server.mysqld_cnf }}"
+    
 - name: my.cnf is in place
   when:
     - mafalb.mysql.server.manage_config
@@ -46,3 +50,7 @@
     state: started
     enabled: true
   register: mysql_is_running
+
+- name: installation is secured
+  include_tasks:
+    file: secure.yml

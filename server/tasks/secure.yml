@@ -1,0 +1,28 @@
+---
+
+- name: installation is secured
+  block:
+    - name: password for root is set
+      mysql_user:
+        name: root
+        host_all: true
+        password: "{{ lookup('password', '/tmp/.mysql.root.password.' + ansible_hostname ) }}"
+
+    - name: .my.cnf for root
+      no_log: true
+      template:
+        src: root.cnf
+        dest: /root/.my.cnf
+        backup: true
+        mode: 00600
+
+    - name: test db does not exist
+      mysql_db:
+        name: test
+        state: absent
+
+    - name: anonymous user does not exist
+      mysql_user:
+        name: ''
+        host_all: true
+        state: absent

@@ -12,4 +12,11 @@
 - hosts: mariadb1
   roles:
     - role: mafalb.mysql/server
+  tasks:
+    - name: check if we can login
+      command: mysql -e 'show databases'
+    - name: check that we cant login without password
+      command: mysql -e 'show databases' -p,fCkRZn6_95kH3i,9uG-
+      register: _mafalb.mysql.login
+      failed_when: _mafalb.mysql.login.rc == 0
 ...

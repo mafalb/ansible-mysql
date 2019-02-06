@@ -31,4 +31,3 @@ log_bin=/var/log/mariadb/bin
 
 [mariadb-5.5]
 
-
