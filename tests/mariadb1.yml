@@ -14,9 +14,12 @@
     - role: mafalb.mysql/server
   tasks:
     - name: check if we can login
+      changed_when: false
       command: mysql -e 'show databases'
+
     - name: check that we cant login without password
-      command: mysql -e 'show databases' -p,fCkRZn6_95kH3i,9uG-
+      changed_when: false
       register: _mafalb_mysql_login
       failed_when: _mafalb_mysql_login.rc == 0
+      command: mysql -e 'show databases' -p,fCkRZn6_95kH3i,9uG-
 ...
