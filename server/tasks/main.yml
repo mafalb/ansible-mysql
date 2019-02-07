@@ -9,7 +9,7 @@
     - never
     - debug
 
-- name: assertitions
+- name: assertions
   assert:
     that:
       - mafalb.mysql.server.manage_package
