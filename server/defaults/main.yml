@@ -6,7 +6,7 @@ mysql_types:
     service: mysqld
 
 mysql:
-  type: default
+  type: "{{ mysql_type|default('default') }}"
   server:
     manage_package: true
     manage_security: false
