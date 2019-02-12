@@ -1,5 +1,6 @@
 # vim: set ft=yaml ts=2:
 ---
 - import_playbook: mariadb1.yml
+- import_playbook: mysql_community_1.yml
 ...
 

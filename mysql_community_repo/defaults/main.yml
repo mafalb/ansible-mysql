@@ -1,0 +1,4 @@
+---
+package_repo:
+  state: "{{ package_repo_state|default('present') }}"
+...

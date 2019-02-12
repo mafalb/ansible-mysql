@@ -1,0 +1,6 @@
+# vim: set ft=yaml ts=2:
+---
+- name: repo file is absent
+  file:
+    path: /etc/yum.repos.d/mysql-community.repo
+    state: absent

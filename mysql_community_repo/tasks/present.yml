@@ -1,0 +1,47 @@
+# vim: set ft=yaml ts=2:
+---
+
+- name: assertions
+  assert:
+    that:
+      - package_repo_version is defined
+
+- name: rpm gpg key does exist
+  copy:
+    src: RPM-GPG-KEY-mysql
+    dest: /etc/pki/rpm-gpg/
+
+- name: rpm gpg key is imported
+  rpm_key:
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
+    state: present
+
+- name: repo for mysql {{ package_repo_version }} does exist
+  yum_repository:
+    name: mysql{{ package_repo_version }}-community
+    description: MySQL {{ package_repo_version }} Community Server
+    file: mysql-community
+    baseurl: http://repo.mysql.com/yum/mysql-{{ package_repo_version }}-community/el/{{ ansible_distribution_major_version }}/$basearch/
+    enabled: true
+    gpgcheck: true
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
+
+- name: repo for mysql tools does exist
+  yum_repository:
+    name: mysql-tools-community
+    description: MySQL Tools Community
+    file: mysql-community
+    baseurl: http://repo.mysql.com/yum/mysql-tools-community/el/{{ ansible_distribution_major_version }}/$basearch/
+    enabled: true
+    gpgcheck: true
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
+
+- name: repo for mysql tools preview does exist
+  yum_repository:
+    name: mysql-tools-preview
+    description: MySQL Tools Preview
+    file: mysql-community
+    baseurl: http://repo.mysql.com/yum/mysql-tools-preview/el/{{ ansible_distribution_major_version }}/$basearch/
+    enabled: false
+    gpgcheck: true
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql

@@ -1,0 +1,4 @@
+---
+dependendencies:
+  - role: mafalb.mysql/mysql_community_repo
+    when: mysql_type == 'mysql_community'

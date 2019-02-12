@@ -1,10 +1,14 @@
 ---
 
-mafalb:
-  mysql:
-    server:
-      manage_package: true
-      manage_security: false
-      manage_service: true
-      manage_config: true
-      external_config: false
+mysql_types:
+  mysql_community:
+    package: mysql-community-server
+    service: mysqld
+
+mysql:
+  server:
+    manage_package: true
+    manage_security: false
+    manage_service: true
+    manage_config: true
+    external_config: false

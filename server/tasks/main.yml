@@ -4,7 +4,7 @@
   include_vars:
     file: "{{ ansible_distribution }}.yml"
 
-- debug: var=mafalb.mysql
+- debug: var=mysql
   tags:
     - never
     - debug
@@ -12,41 +12,41 @@
 - name: assertions
   assert:
     that:
-      - mafalb.mysql.server.manage_package
-      - mafalb.mysql.server.package is defined
-      - mafalb.mysql.server.additional_packages is defined
+      - mysql.server.manage_package
+      - mysql.server.package is defined
+      - mysql.server.additional_packages is defined
 
 - name: package is present
-  when: mafalb.mysql.server.manage_package
+  when: mysql.server.manage_package
   package:
-    name: "{{ [ mafalb.mysql.server.package ] + mafalb.mysql.server.additional_packages }}"
+    name: "{{ [ mysql.server.package ] + mysql.server.additional_packages }}"
     state: present
 
 - name: my.cnf does exist
   file:
-    path: "{{ mafalb.mysql.server.mysqld_cnf }}"
+    path: "{{ mysql.server.mysqld_cnf }}"
 
 - name: my.cnf is in place
   when:
-    - mafalb.mysql.server.manage_config
-    - not mafalb.mysql.server.external_config
+    - mysql.server.manage_config
+    - not mysql.server.external_config
   template:
     src: server.cnf
-    dest: "{{ mafalb.mysql.server.mysqld_cnf }}"
+    dest: "{{ mysql.server.mysqld_cnf }}"
   notify: reload mysql
 
 - name: my.cnf is in place
   when:
-    - mafalb.mysql.server.manage_config
-    - mafalb.mysql.server.external_config
+    - mysql.server.manage_config
+    - mysql.server.external_config
   template:
     src: server.cnf
-    dest: "{{ mafalb.mysql.server.mysqld_cnf }}"
+    dest: "{{ mysql.server.mysqld_cnf }}"
   notify: reload mysql
 
-- name: mysql daemon is running
+- name: mysql service is running
   service:
-    name: "{{ mafalb.mysql.server.daemon }}"
+    name: "{{ mysql.server.service }}"
     state: started
     enabled: true
   register: mysql_is_running

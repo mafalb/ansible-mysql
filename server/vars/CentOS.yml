@@ -1,10 +1,14 @@
 ---
 
-mafalb:
-  mysql:
-    server:
-      package: "{{ mafalb_mysql_server_package|default('mariadb-server') }}"    
-      daemon: "{{ mafalb_mysql_server_daemon|default('mariadb') }}"
-      additional_packages:
-        - MySQL-python
-      mysqld_cnf: /etc/my.cnf.d/server.cnf
+mysql_types:
+  mysql_community:
+    package: mysql-community-server
+    service: mysqld
+    
+mysql:
+  server:
+    package: "{{ mysql_types[mysql_type].package|default('mariadb-server') }}"    
+    service: "{{ mysql_types[mysql_type].service|default('mariadb') }}"
+    mysqld_cnf: /etc/my.cnf.d/server.cnf
+  additional_packages:
+    - MySQL-python

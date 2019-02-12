@@ -1,0 +1,27 @@
+# vim: set ft=yaml ts=2:
+---
+- hosts: cihost
+  vars_files:
+    - vars/main.yml
+  roles:
+    - role: mafalb.ansible_ci/node
+      ansible_ci_test_name: mysql_community_1
+      ansible_ci_node_type: docker
+      ansible_ci_node_image_name: centos7
+
+- hosts: mysql_community_1
+  roles:
+    - role: mafalb.mysql/server
+      mysql_type: mysql_community
+      mysql_version: 5.5
+  tasks:
+    - name: check if we can login
+      changed_when: false
+      command: mysql -e 'show databases'
+
+    - name: check that we cant login without password
+      changed_when: false
+      register: _mafalb_mysql_login
+      failed_when: _mafalb_mysql_login.rc == 0
+      command: mysql -e 'show databases' -p,fCkRZn6_95kH3i,9uG-
+...
