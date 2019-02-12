@@ -6,6 +6,7 @@ mysql_types:
     service: mysqld
 
 mysql:
+  type: default
   server:
     manage_package: true
     manage_security: false
