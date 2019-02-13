@@ -1,7 +1,8 @@
 ---
 
+mysql_type: default
 mysql:
-  type: "{{ mysql_type|default('default') }}"
+  type: "{{ mysql_type }}"
   server:
     manage_package: true
     manage_security: false
