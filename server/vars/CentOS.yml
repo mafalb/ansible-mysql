@@ -5,5 +5,5 @@ mysql:
     package: "{{ mysql_types[mysql_type].package|default('mariadb-server') }}"    
     service: "{{ mysql_types[mysql_type].service|default('mariadb') }}"
     mysqld_cnf: /etc/my.cnf.d/server.cnf
-  additional_packages:
-    - MySQL-python
+    additional_packages:
+      - MySQL-python
