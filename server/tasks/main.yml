@@ -9,6 +9,7 @@
   assert:
     that:
       - mysql.type is defined
+      - mysql.version is defined
 
 - name: include OS specific variables
   include_vars:
