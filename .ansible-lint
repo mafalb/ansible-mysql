@@ -1,4 +1,4 @@
 skip_list:
   - '405'
 exclude_paths:
-  - ./server/meta/main.yml
+  - ./server/meta/
