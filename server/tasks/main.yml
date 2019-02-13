@@ -1,13 +1,24 @@
 ---
 
-- name: include OS specific variables
-  include_vars:
-    file: "{{ ansible_distribution }}.yml"
-
 - debug: var=mysql
   tags:
     - never
     - debug
+
+- name: assertions
+  assert:
+    that:
+      - mysql.type is defined
+
+- name: include OS specific variables
+  when: mysql.type != 'default'
+  include_vars:
+    file: types.yml
+
+- name: include OS specific variables
+  when: mysql.type == 'default'
+  include_vars:
+    file: "{{ ansible_distribution }}.yml"
 
 - name: assertions
   assert:

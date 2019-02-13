@@ -1,10 +1,5 @@
 ---
 
-mysql_types:
-  mysql_community:
-    package: mysql-community-server
-    service: mysqld
-
 mysql:
   type: "{{ mysql_type|default('default') }}"
   server:

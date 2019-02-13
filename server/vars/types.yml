@@ -1,0 +1,7 @@
+---
+mysql_types:
+  default:
+  mysql_community:
+    package: mysql-community-server
+    service: mysqld
+...
