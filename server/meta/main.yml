@@ -1,4 +1,5 @@
 ---
+galaxy_info: {} # noqa 701
 dependencies:
   - role: mafalb.mysql/mysql_community_repo
     when: mysql.type == 'mysql_community'

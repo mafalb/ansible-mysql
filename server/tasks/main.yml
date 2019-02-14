@@ -12,12 +12,10 @@
       - mysql.version is defined
 
 - name: include OS specific variables
-  include_vars:
-    file: types.yml
+  include_vars: types.yml
 
 - name: include OS specific variables
-  include_vars:
-    file: "{{ ansible_distribution }}.yml"
+  include_vars: "{{ ansible_distribution }}.yml"
 
 - name: assertions
   assert:
@@ -62,5 +60,4 @@
   register: mysql_is_running
 
 - name: installation is secured
-  include_tasks:
-    file: secure.yml
+  include_tasks: secure.yml
