@@ -1,6 +1,6 @@
 [mysqld_safe]
-log-error={{ mysql_types[mysql_type].server.log_file }}
-pid-file={{ mysql_types[mysql_type].server.pid_file }}
+log-error={{ mysql.server.log_file }}
+pid-file={{ mysql.server.pid_file }}
 
 # this is read by the standalone daemon and embedded servers
 [server]

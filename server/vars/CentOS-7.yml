@@ -6,4 +6,5 @@ mysql:
     service: "{{ mysql_types[mysql_type].service|default('mariadb') }}"
     additional_packages:
       - MySQL-python
-    log_file: /var/log/mariadb/mariadb.log
+    log_file: "{{ mysql_types[mysql_type].log_file|default('/var/log/mariadb/mariadb.log') }}"
+    pid_file: "{{ mysql_types[mysql_type].pid_file|default('/var/run/mariadb/mariadb.pid') }}"
