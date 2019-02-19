@@ -22,4 +22,12 @@
       register: _mafalb_mysql_login
       failed_when: _mafalb_mysql_login.rc == 0
       command: mysql -e 'show databases' -p,fCkRZn6_95kH3i,9uG-
+
+    - name: we can create a database (we can authenticate)
+      mysql_db:
+        name: gugu
+
+    # note: implicit we are testing that client binaries are installed
+    - name: we can query the new database
+      command: mysql -e 'select true' gugu
 ...
