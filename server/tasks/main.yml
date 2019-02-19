@@ -9,13 +9,12 @@
   assert:
     that:
       - mysql.type is defined
-      - mysql.version is defined
 
 - name: include OS specific variables
   include_vars: types.yml
 
 - name: include OS specific variables
-  include_vars: "{{ ansible_distribution }}.yml"
+  include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
 
 - name: assertions
   assert:
@@ -30,17 +29,14 @@
     name: "{{ [ mysql.server.package ] + mysql.server.additional_packages }}"
     state: present
 
-- name: my.cnf does exist
-  file:
-    path: "{{ mysql.server.mysqld_cnf }}"
-
 - name: my.cnf is in place
   when:
     - mysql.server.manage_config
     - not mysql.server.external_config
   template:
-    src: server.cnf
-    dest: "{{ mysql.server.mysqld_cnf }}"
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+    backup: true
   notify: reload mysql
 
 - name: my.cnf is in place
@@ -48,8 +44,8 @@
     - mysql.server.manage_config
     - mysql.server.external_config
   template:
-    src: server.cnf
-    dest: "{{ mysql.server.mysqld_cnf }}"
+    src: my.cnf
+    dest: /etc/my.cnf
   notify: reload mysql
 
 - name: mysql service is running

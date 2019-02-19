@@ -4,7 +4,7 @@
 - name: assertions
   assert:
     that:
-      - mysql.version is defined
+      - mysql_version is defined
 
 - name: rpm gpg key does exist
   copy:
@@ -16,12 +16,12 @@
     key: /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
     state: present
 
-- name: repo for mysql {{ mysql.version }} does exist
+- name: repo for mysql {{ mysql_version }} does exist
   yum_repository:
-    name: mysql{{ mysql.version }}-community
-    description: MySQL {{ mysql.version }} Community Server
+    name: mysql{{ mysql_version }}-community
+    description: MySQL {{ mysql_version }} Community Server
     file: mysql-community
-    baseurl: http://repo.mysql.com/yum/mysql-{{ mysql.version }}-community/el/{{ ansible_distribution_major_version }}/$basearch/
+    baseurl: http://repo.mysql.com/yum/mysql-{{ mysql_version }}-community/el/{{ ansible_distribution_major_version }}/$basearch/
     enabled: true
     gpgcheck: true
     gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql

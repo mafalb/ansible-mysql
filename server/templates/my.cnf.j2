@@ -1,0 +1,39 @@
+[mysqld_safe]
+log-error={{ mysql_types[mysql_type].log_file }}
+pid-file={{ mysql_types[mysql_type].pid_file }}
+
+# this is read by the standalone daemon and embedded servers
+[server]
+
+
+# this is only for the mysqld standalone daemon
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+# Settings user and group are ignored when systemd is used.
+# If you need to run mysqld under a different user or group,
+# customize your systemd unit file for mariadb according to the
+# instructions in http://fedoraproject.org/wiki/Systemd
+
+#plugin-load=unix_socket=auth_socket.so
+innodb_file_per_table
+#innodb_log_file_size=32M
+#innodb_buffer_pool_size=1G
+#log_bin=/var/log/mariadb/bin
+
+# this is only for embedded server
+[embedded]
+
+# This group is only read by MariaDB-5.5 servers.
+# If you use the same .cnf file for MariaDB of different versions,
+# use this group for options that older servers don't understand
+[mysqld-5.5]
+
+# These two groups are only read by MariaDB servers, not by MySQL.
+# If you use the same .cnf file for MySQL and MariaDB,
+# you can put MariaDB-only options here
+[mariadb]
+
+[mariadb-5.5]

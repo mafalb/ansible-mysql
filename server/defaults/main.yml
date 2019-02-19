@@ -1,11 +1,9 @@
 ---
 
 mysql_type: default
-mysql_version: 5.5
 
 mysql:
   type: "{{ mysql_type }}"
-  version: "{{ mysql_version }}"
   server:
     manage_package: true
     manage_security: false

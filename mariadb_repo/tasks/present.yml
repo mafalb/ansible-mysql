@@ -1,0 +1,27 @@
+# vim: set ft=yaml ts=2:
+---
+
+- name: assertions
+  assert:
+    that:
+      - mysql_version is defined
+
+- name: rpm gpg key does exist
+  copy:
+    src: RPM-GPG-KEY-MariaDB
+    dest: /etc/pki/rpm-gpg/
+
+- name: rpm gpg key is imported
+  rpm_key:
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
+    state: present
+
+- name: repo for mariadb {{ mysql_version }} does exist
+  yum_repository:
+    name: mariadb
+    description: MariaDB
+    file: mariadb
+    baseurl: http://yum.mariadb.org/{{ mysql_version }}/centos7-amd64
+    enabled: true
+    gpgcheck: true
+    gpgkey: file:///etc/pki/rpm-gpg/http://yum.mariadb.org/5.5/centos7-amd64

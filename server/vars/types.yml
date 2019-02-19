@@ -2,6 +2,14 @@
 mysql_types:
   default:
   mysql_community:
+    default_version: 5.5
     package: mysql-community-server
     service: mysqld
+    log_file: /var/log/mysqld.log
+    pid_file: /var/run/mysqld/mysqld.pid
+  mariadb:
+    package: MariaDB
+    service: mysql
+    log_file: /var/lib/mysql/mysqld.log 
+    pid_file: /var/lib/mysql/mysqld.pid
 ...
