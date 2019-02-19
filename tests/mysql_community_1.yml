@@ -8,12 +8,23 @@
       ansible_ci_test_name: mysql_community_1
       ansible_ci_node_type: docker
       ansible_ci_node_image_name: centos7
+    - role: mafalb.ansible_ci/node
+      ansible_ci_test_name: mysql_community_2
+      ansible_ci_node_type: docker
+      ansible_ci_node_image_name: centos7
 
 - hosts: mysql_community_1
   roles:
     - role: mafalb.mysql/server
       mysql_type: mysql_community
       mysql_version: 5.5
+- hosts: mysql_community_2
+  roles:
+    - role: mafalb.mysql/server
+      mysql_type: mysql_community
+      mysql_version: 5.6
+
+- hosts: mysql_community_1,mysql_community_2
   tasks:
     - name: check if we can login
       changed_when: false
