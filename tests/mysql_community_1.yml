@@ -42,5 +42,6 @@
 
     # note: implicit we are testing that client binaries are installed
     - name: we can query the new database
+      changed_when: false
       command: mysql -e 'select true' gugu
 ...
