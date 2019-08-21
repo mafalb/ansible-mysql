@@ -1,0 +1,99 @@
+#!/bin/bash
+# vim: set ts=4 expandtab:
+
+REMOTE_HOST={{ mysql_dump_sftp_server }}
+REMOTE_USER={{ ansible_hostname }}backup
+
+DUMPOPTIONS="--opt --events --triggers --routines --create-options"
+ALREADY_DONE_DATABASES=""
+DATABASES=""
+
+function bark_at_the_moon {
+    printf "%s\n" ${2:-"Something went wrong"}
+    exit ${1:-1}
+}
+
+function backup_databases
+{
+    local OPTIND
+    local options=$DUMPOPTIONS
+
+    while getopts "no:" opt ; do
+        case $opt in
+            o)
+                local filename="$OPTARG"
+                ;;
+            n)    
+                local options="$options --no-data"
+                ;;
+            \?)
+                bark_at_the_moon 1 "Wrong option: -$OPTARG"
+                ;;
+        esac
+    done
+
+    shift $((OPTIND-1))
+
+    local databases="$@"
+
+    if test -z "$databases"
+    then
+        bark_at_the_moon 1 "list of databases is empty"
+    fi
+
+    if test "$#" -gt 1
+    then
+        local options="$options --lock-all-tables"
+        local filename="${filename:-$databases// /_}.$(date +%Y%m%d).sql"
+    else
+        local options="$options --lock-tables"
+        local filename="${filename:-$1}.$(date +%Y%m%d).sql"
+    fi
+
+    mysqldump --databases $databases $options|lz4 -c|curl -sv -T - --pubkey /root/.ssh/id_rsa.pub sftp://$REMOTE_USER@$REMOTE_HOST/~/Documents/mysql/$filename.lz4
+
+    ALREADY_DONE_DATABASES="$ALREADY_DONE_DATABASES $databases"
+}
+
+{% if mysql_dump is defined %}
+
+{% for element in mysql_dump.without_data %}
+backup_databases -o {{ element.name|default(element.databases|join('_')) }} -n {{ element.databases|join(' ') }}
+{% endfor %}
+
+{% for element in mysql_dump.with_data %}
+backup_databases -o {{ element.name|default(element.databases|join('_')) }} {{ element.databases|join(' ') }}
+{% endfor %}
+
+{% endif %}
+
+# build a list of the remaining databases to be backuped
+#
+while read database
+do
+    if [[ "$database" = *#mysql*#lost+found ]]
+    then
+        # lost+found is a special directory, not a database
+        #
+        continue
+    fi
+
+    if test "$database" == "information_schema"
+    then
+        continue
+    fi
+
+    # skip database if already backuped
+    #
+    for already_done_database in $ALREADY_DONE_DATABASES
+    do
+        if test "$database" = "$already_done_database"
+        then
+            continue 2
+        fi
+    done
+
+    DATABASES="$DATABASES $database"
+    backup_databases $database
+
+done < <(mysql -BNe "show databases")

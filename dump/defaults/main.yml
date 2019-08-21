@@ -1,0 +1,7 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+mysql_dump:
+  without_data: []
+  with_data: []
+  exclude: []
+...

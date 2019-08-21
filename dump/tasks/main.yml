@@ -1,0 +1,24 @@
+# vim: set ft=yaml ts=2 expandtab:
+---
+- name: assertions
+  assert:
+    that: mysql_dump_sftp_server is defined  
+
+- name: lz4 is installed
+  package:
+    name: lz4
+    state: present
+
+- name: mysql backup script is present
+  template:
+    src: backup.mysql.sh.j2
+    dest: /usr/local/sbin/backup.mysql
+    mode: 00755
+
+- name: symlink to daily cronjobs is present
+  file:
+    src: /usr/local/sbin/backup.mysql
+    dest: /etc/cron.daily/backup.mysql
+    state: link
+
+...
