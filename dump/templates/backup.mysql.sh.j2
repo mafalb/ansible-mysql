@@ -55,6 +55,11 @@ function backup_databases
     ALREADY_DONE_DATABASES="$ALREADY_DONE_DATABASES $databases"
 }
 
+if test "$LOGNAME" = "root"
+then
+    export HOME="/root"
+fi
+
 {% if mysql_dump is defined %}
 
 {% for element in mysql_dump.without_data %}
