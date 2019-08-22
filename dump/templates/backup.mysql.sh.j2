@@ -4,9 +4,10 @@
 REMOTE_HOST={{ mysql_dump_sftp_server }}
 REMOTE_USER={{ ansible_hostname }}backup
 
-DUMPOPTIONS="--opt --events --triggers --routines --create-options"
+DUMPOPTIONS="--opt --events --triggers --routines --create-options --skip-dump-date"
 ALREADY_DONE_DATABASES=""
 DATABASES=""
+EXCLUDE_DATABASES=""
 
 function bark_at_the_moon {
     printf "%s\n" ${2:-"Something went wrong"}
@@ -18,13 +19,13 @@ function backup_databases
     local OPTIND
     local options=$DUMPOPTIONS
 
-    while getopts "no:" opt ; do
+    while getopts "f:o:" opt ; do
         case $opt in
-            o)
+            f)
                 local filename="$OPTARG"
                 ;;
-            n)    
-                local options="$options --no-data"
+            o)    
+                local options="$options $OPTARG"
                 ;;
             \?)
                 bark_at_the_moon 1 "Wrong option: -$OPTARG"
@@ -50,6 +51,11 @@ function backup_databases
         local filename="${filename:-$1}.$(date +%Y%m%d).sql"
     fi
 
+    echo
+    echo $databases
+    echo $options
+    echo $filename
+
     mysqldump --databases $databases $options|lz4 -c|curl -sv -T - --pubkey /root/.ssh/id_rsa.pub sftp://$REMOTE_USER@$REMOTE_HOST/~/Documents/mysql/$filename.lz4
 
     ALREADY_DONE_DATABASES="$ALREADY_DONE_DATABASES $databases"
@@ -62,12 +68,12 @@ fi
 
 {% if mysql_dump is defined %}
 
-{% for element in mysql_dump.without_data %}
-backup_databases -o {{ element.name|default(element.databases|join('_')) }} -n {{ element.databases|join(' ') }}
-{% endfor %}
-
-{% for element in mysql_dump.with_data %}
-backup_databases -o {{ element.name|default(element.databases|join('_')) }} {{ element.databases|join(' ') }}
+{% for element in mysql_dump %}
+{% if element.exclude is defined and element.exclude %}
+EXCLUDE_DATABASES="$EXCLUDE_DATABASES {{ element.databases|join(' ') }}"
+{% else %}
+backup_databases -f {{ element.name|default(element.databases|join('_')) }} {% if element.options is defined %}{% for option in element.options %}-o "{{ option }}" {% endfor %}{% endif %} {{ element.databases|join(' ') }}
+{% endif %}
 {% endfor %}
 
 {% endif %}
@@ -93,6 +99,16 @@ do
     for already_done_database in $ALREADY_DONE_DATABASES
     do
         if test "$database" = "$already_done_database"
+        then
+            continue 2
+        fi
+    done
+
+    # skip database if it is in exclude list
+    #
+    for exclude_database in $EXCLUDE_DATABASES
+    do
+        if test "$database" = "$exclude_database"
         then
             continue 2
         fi

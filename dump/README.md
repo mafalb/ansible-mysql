@@ -10,33 +10,39 @@
 
 ```
 - hosts: localhost
+  vars:
+    mysql_dump_sftp_server: some_sftp_server.example.com
   roles:
-  - role: mafalb.mysql/server
-    mysql_type: mysql_community
-    mysql_version: 5.5
+    - role: mafalb.mysql/dump
 ```
 
 ## Variables
 
 ```
-mysql_dump:
+mysql_dump_sftp_server: some_sftp_server.example.com
+```
+data will be dumped into a directory Documents/mysql on the sftp server
 
-  with_content:
+- - -
+
+```
+mysql_dump:
 
     - name: xxx
       databases:
         - db2           # these are dumped with lock-all-tables
         - db3           # into file xxx.sql
 
-    - name: yyy     #  db4 and db5 will dump into file yyy.sql
+    - name: yyy         #  db4 and db5 will dump into file yyy.sql
       databases:
           - db4
           - db5
         
-  without_content:      # dumped with --no-data, i.e. only the tables structure
-
     - databases:                
         - db5           # database db5 will dump into file db5.sql
+      options:
+        - --no-data     # dumped with --no-data, i.e. only the tables structure
+                        # you should be able to give any mysql command line option
 
     - name: db8
       databases:
@@ -47,10 +53,12 @@ mysql_dump:
         - db6           # databases db6 and db7
         - db7           # will dump into file zzz.sql
 
-  exclude:              # won't dump at all
-    databases:
-      - db9
-      - db10
+    - exclude: True
+      databases:
+        - these
+        - databases
+        - wont
+        - dump
 ```
 
 in the above structure, every database not mentioned will be backuped into a separate file named after the database.sql
