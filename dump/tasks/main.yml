@@ -2,7 +2,7 @@
 ---
 - name: assertions
   assert:
-    that: mysql_dump_sftp_server is defined  
+    that: (mysql_dump_sftp_server is defined) or (mysql_dump_local_dest is defined)
 
 - name: lz4 is installed
   package:
@@ -21,4 +21,25 @@
     dest: /etc/cron.daily/backup.mysql
     state: link
 
+- block:
+
+    - name: script for hardlinking is present on sftp server
+      copy:
+        src: hardlink
+        dest: /usr/local/sbin/
+        mode: 00755
+
+    - name: cronjob is present
+      cron:
+        name: hardlink backups for user {{ ansible_hostname }}backup
+        job: "/usr/local/sbin/hardlink /home/{{ ansible_hostname }}backup/Documents/mysql"
+        hour: '5'
+        minute: '55'
+        user: root
+        backup: true
+
+  delegate_to: "{{ mysql_dump_sftp_server }}"
+  when: mysql_dump_sftp_server is defined
+
+      
 ...

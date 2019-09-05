@@ -1,0 +1,26 @@
+#!/bin/bash
+
+function bark_at_the_moon {
+    printf "%s\n" "${2:-'Something went wrong'}"
+    exit ${1:-1}
+}
+
+echo $1
+
+if ! test -d "$1"
+then
+	bark_at_the_moon 1 'Can not access directory'
+fi
+
+DIR="$1"
+if ! cd "$DIR"
+then
+	bark_at_the_moon 1 'Could not change directory'
+fi
+
+if ! hardlink -v -c .
+then
+	bark_at_the_moon 1 'hardlink failed'
+fi
+
+exit
